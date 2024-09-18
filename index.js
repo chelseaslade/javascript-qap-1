@@ -46,6 +46,20 @@ while (i < userArgs.length) {
         printHelpMsg();
         return;
       }
+
+      i += 2;
+      continue;
+
+    case "--nums":
+      includeNum = true;
+      break;
+
+    case "--symbols":
+      includeSymbols = true;
+      break;
+
+    case "--upper":
+      includeUpper = true;
       break;
   }
   i++;
@@ -59,6 +73,7 @@ function generatePassword(
   includeSymbols
 ) {
   //Required Variables
+
   const lower = "abcdefghijklmnopqrstuvwxyz";
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const nums = "1234567890";
@@ -70,21 +85,17 @@ function generatePassword(
   //Add additional characters if flagged
   if (includeNum == true) {
     characters += nums;
-  } else if (includeUpper == true) {
+  }
+  if (includeUpper == true) {
     characters += upper;
-  } else if (includeSymbols == true) {
+  }
+  if (includeSymbols == true) {
     characters += symbols;
   }
 
   //Default password length of 8
   if (passwordLength == "") {
     passwordLength = 8;
-  }
-
-  // Errors
-  if (passwordLength < 8) {
-    printHelpMsg();
-    return;
   }
 
   let password = "";
@@ -96,7 +107,12 @@ function generatePassword(
 }
 
 //Call Function/Generate Password
-password = generatePassword(passwordLength);
+password = generatePassword(
+  passwordLength,
+  includeNum,
+  includeUpper,
+  includeSymbols
+);
 
 //Print password output to console
 console.log(`Your password: ${password}`);
