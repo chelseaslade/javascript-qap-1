@@ -14,9 +14,15 @@ function printHelpMsg() {
   );
 }
 
+//Flags
+
 //Collect input from command line
-const passwordLength = process.argv.slice(2);
-// console.log(passwordLength);
+let passwordLength = process.argv.slice(2);
+
+//Default password length of 8
+if (passwordLength == "") {
+  passwordLength = 8;
+}
 
 //Required Variables
 const characters = "abcdefghijklmnopqrstuvwxyz";
