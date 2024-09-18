@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const { parse } = require("node:path");
 const process = require("node:process");
 
 //Help Message
@@ -7,7 +8,9 @@ function printHelpMsg() {
   console.log(
     `Password Generator Help Message
 
-    --length <num>          Selects length of password. If none entered, defaults to 8 characters. Must be 8+ characters.
+    DEFAULT: If no arguments are entered, password defaults to 8 characters in length and lowercase characters only.
+
+    --length <num>          Selects length of password. Must be 8+ characters.
     --help                  Display this help message.
 
     Additional Features:
@@ -15,39 +18,81 @@ function printHelpMsg() {
     --symbols               Includes symbols in password generation.
     --upper                 Includes uppercase characters in password generation.
 
-    Example: generatepassword --length <9>
+    Example: generatepassword --length 9
     Expected output: Your password: xxxxxxxxx`
   );
 }
 
-//Collect input from command line
-let passwordLength = process.argv.slice(2);
+//Defaults
+let passwordLength = "";
+let includeNum = false;
+let includeUpper = false;
+let includeSymbols = false;
 
-//Default password length of 8
-if (passwordLength == "") {
-  passwordLength = 8;
+//Collect input from command line
+const userArgs = process.argv.slice(2);
+
+//Parse & check for flags
+let i = 0;
+while (i < userArgs.length) {
+  switch (userArgs[i]) {
+    case "--length":
+      const secondaryArg = userArgs[i + 1];
+      const parseLength = parseInt(secondaryArg);
+
+      if (parseLength >= 8) {
+        passwordLength = parseLength;
+      } else {
+        printHelpMsg();
+        return;
+      }
+      break;
+  }
+  i++;
 }
 
-//Required Variables
-const characters = "abcdefghijklmnopqrstuvwxyz";
-const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const nums = "1234567890";
-const symbols = "!@#$%^&*+-=";
-
 //Main password generation function
-function generatePassword(passwordLength) {
+function generatePassword(
+  passwordLength,
+  includeNum,
+  includeUpper,
+  includeSymbols
+) {
+  //Required Variables
+  const lower = "abcdefghijklmnopqrstuvwxyz";
+  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const nums = "1234567890";
+  const symbols = "!@#$%^&*+-=";
+
+  //Determine characters (Default: Lowercase)
+  let characters = lower;
+
+  //Add additional characters if flagged
+  if (includeNum == true) {
+    characters += nums;
+  } else if (includeUpper == true) {
+    characters += upper;
+  } else if (includeSymbols == true) {
+    characters += symbols;
+  }
+
+  //Default password length of 8
+  if (passwordLength == "") {
+    passwordLength = 8;
+  }
+
+  // Errors
+  if (passwordLength < 8) {
+    printHelpMsg();
+    return;
+  }
+
   let password = "";
   const characterLength = characters.length;
   for (let i = 0; i < passwordLength; i++) {
     password += characters.charAt(Math.floor(Math.random() * characterLength));
   }
   return password;
-}
-
-// Errors
-if (passwordLength < 8) {
-  printHelpMsg();
-  return;
 }
 
 //Call Function/Generate Password
