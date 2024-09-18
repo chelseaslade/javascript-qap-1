@@ -5,33 +5,46 @@ const process = require("node:process");
 //Help Message
 function printHelpMsg() {
   console.log(
-    `To use this app, please enter: 'generatepassword <Number of Characters for Password>'. 
+    `Help Message:
+    
+    To use this app, please enter: 'generatepassword <Number of Characters for Password>'. 
 
-    Example: generatepassword <9>
+    Example: generatepassword 9
     Expected output: Your secure password: xxxxxxxxx`
   );
 }
 
+//Flags
+
 //Collect input from command line
-const passwordLength = process.argv.slice(2);
+let passwordLength = process.argv.slice(2);
+
+//Default password length of 8
+if (passwordLength == "") {
+  passwordLength = 8;
+}
 
 //Required Variables
-let characters = [abcdefghijklmnopqrstuvwxyz];
+const characters = "abcdefghijklmnopqrstuvwxyz";
 
 //Main password generation function
-function generatePassword() {
+function generatePassword(passwordLength) {
   let password = "";
+  const characterLength = characters.length;
+  for (let i = 0; i < passwordLength; i++) {
+    password += characters.charAt(Math.floor(Math.random() * characterLength));
+  }
   return password;
 }
 
-//Errors
-if (passwordLength.length < 8) {
+// Errors
+if (passwordLength < 8) {
   printHelpMsg();
   return;
 }
 
 //Call Function/Generate Password
-const password = generatePassword();
+password = generatePassword(passwordLength);
 
 //Print password output to console
 console.log(`Your secure password: ${password}`);
